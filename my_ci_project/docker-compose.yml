@@ -1,0 +1,7 @@
+version: '3'
+services:
+  ansible:
+    image: williamyeh/ansible:alpine3
+    volumes:
+      - .:/ansible
+    working_dir: /ansible
