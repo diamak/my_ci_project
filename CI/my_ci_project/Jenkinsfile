@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    environment {
+        ANSIBLE_CONFIG = "${WORKSPACE}/ansible.cfg"
+    }
+    stages {
+        stage('Install') {
+            steps {
+                script {
+                    sh 'pipenv install'
+                }
+            }
+        }
+        stage('Docker Compose Up') {
+            steps {
+                script {
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+        stage('Lint') {
+            steps {
+                script {
+                    sh 'pipenv run ansible-lint .'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                script {
+                    sh 'pipenv run molecule test'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'pipenv run ansible-playbook playbook.yml'
+                }
+            }
+        }
+        stage('Docker Compose Down') {
+            steps {
+                script {
+                    sh 'docker-compose down'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                sh 'pipenv --rm'
+            }
+        }
+    }
+}

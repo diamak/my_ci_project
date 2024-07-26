@@ -1,0 +1,8 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Ensure role is applied
+      assert:
+        that:
+          - "'some_expected_value' in some_file"
